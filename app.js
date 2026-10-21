@@ -11,6 +11,8 @@ const ExpressError = require('./utils/ExpressError');
 const { CATEGORIES } = require('./public/categories');
 const Product = require('./models/product');
 
+const productRoutes = require('./routes/products');
+
 const dbUrl = process.env.DB_URL;
 
 mongoose.connect(dbUrl)
@@ -50,60 +52,8 @@ app.use((req, res, next) => {
     next();
 });
 
-app.get('/products', async (req, res) => {
-    const products = await Product.find({});
-    res.render('index', { products });
-})
 
-app.get('/products/new', (req, res) => {
-    res.render('new', { CATEGORIES });
-})
-
-app.post('/products', async (req, res) => {
-    const product = new Product(req.body.product);
-    await product.save();
-    req.flash('success', 'Successfully made a new product');
-    res.redirect(`/products/${product._id}`);
-})
-
-app.get('/products/:id', async (req, res) => {
-    const product = await Product.findById(req.params.id);
-    if (!product) {
-        req.flash('error', 'Cannot find that hike!');
-        return res.redirect('/products');
-    }
-    res.render('show', { product });
-})
-
-app.get('/products/:id/edit', async (req, res) => {
-    const product = await Product.findById(req.params.id);
-    if (!product) {
-        req.flash('error', 'Cannot find that product!');
-        return res.redirect('/products');
-    }
-    res.render('edit', { product, CATEGORIES });
-})
-
-app.put('/products/:id', async (req, res) => {
-    const { id } = req.params;
-    const product = await Product.findByIdAndUpdate(id, { ...req.body.product });
-    await product.save();
-    if (!product) {
-        req.flash('error', 'Cannot find that product!');
-        return res.redirect('/products');
-    }
-    req.flash('success', 'Successfully updated product!');
-    res.redirect(`/products/${product._id}`);
-})
-
-app.delete('/products/:id', async (req, res) => {
-    const { id } = req.params;
-    await Product.findByIdAndDelete(id);
-    req.flash('success', 'Successfully deleted product!');
-    res.redirect('/products');
-})
-
-
+app.use('/products', productRoutes);
 
 
 app.all(/(.*)/, (req, res, next) => {
