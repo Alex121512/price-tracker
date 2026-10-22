@@ -8,8 +8,6 @@ const ejsMate = require('ejs-mate');
 const session = require('express-session');
 const flash = require('connect-flash');
 const ExpressError = require('./utils/ExpressError');
-const { CATEGORIES } = require('./public/categories');
-const Product = require('./models/product');
 
 const productRoutes = require('./routes/products');
 

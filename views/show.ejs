@@ -65,7 +65,7 @@
                 </small>
 
                 <div class="d-flex gap-2">
-                    <a href="/products/<%=product._id%>/edit" class="btn btn-outline-primary btn-sm">Edit</a>
+                    <a href="/products/<%=product._id%>/edit" class="btn btn-outline-info btn-sm">Edit</a>
                     <form action="/products/<%= product._id %>?_method=DELETE" method="POST"
                         onsubmit="return confirm('Delete <%= product.code %>?');">
                         <button class="btn btn-outline-danger btn-sm">Delete</button>

@@ -1,9 +1,24 @@
 const Product = require('../models/product');
-const { CATEGORIES } = require('../public/categories');
+const { CATEGORIES } = require('../public/javascripts/categories');
+const escapeRegex = require('../utils/escapeRegex');
 
 module.exports.index = async (req, res) => {
-    const products = await Product.find({});
-    res.render('index', { products });
+    const q = typeof req.query.q === 'string' ? req.query.q.trim() : '';
+    const category = typeof req.query.category === 'string' ? req.query.category : '';
+
+    const filter = {};
+
+    if (q) {
+        const regex = new RegExp(escapeRegex(q), 'i');
+        filter.$or = [{ name: regex }, { code: regex }, { description: regex }];
+    }
+
+    if (CATEGORIES.includes(category)) {
+        filter.category = category;
+    }
+
+    const products = await Product.find(filter).sort({ category: 1, name: 1 });
+    res.render('index', { products, q, category, CATEGORIES });
 }
 
 module.exports.renderNewForm = (req, res) => {

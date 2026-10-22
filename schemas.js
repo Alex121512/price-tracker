@@ -5,7 +5,7 @@ const tier = Joi.number().min(0).required();
 module.exports.productSchema = Joi.object({
     product: Joi.object({
         name: Joi.string().trim().required(),
-        sku: Joi.string().trim().required(),
+        code: Joi.string().trim().required(),
         category: Joi.string().trim().required(),
         description: Joi.string().allow(''),
         prices: Joi.object({
