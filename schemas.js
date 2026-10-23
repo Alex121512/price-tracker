@@ -1,4 +1,5 @@
 const Joi = require('joi');
+const { ROLES } = require('./models/user');
 
 const tier = Joi.number().min(0).required();
 
@@ -16,4 +17,11 @@ module.exports.productSchema = Joi.object({
             tier5: tier.min(Joi.ref('tier4')),
         }).required(),
     }).required(),
+});
+
+module.exports.userSchema = Joi.object({
+    username: Joi.string().trim().alphanum().min(3).max(30).required(),
+    email: Joi.string().trim().email().required(),
+    role: Joi.string().valid(...ROLES).required(),
+    password: Joi.string().min(8).max(128).required(),
 });
