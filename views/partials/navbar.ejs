@@ -6,14 +6,29 @@
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-            <div class="navbar-nav">
-                <a class="nav-link" href="/products/new">New Product</a>
-            </div>
-            <div class="navbar-nav ms-auto">
-                <a class="nav-link" href="/login">Login</a>
-                <a class="nav-link" href="/register">Sing up</a>
-                <a class="nav-link" href="/logout">Logout</a>
-            </div>
+            <% if (currentUser) { %>
+                <div class="navbar-nav">
+                    <a class="nav-link" href="/products">All Products</a>
+                    <% if (currentUser.role==='admin' || currentUser.role==='manager' ) { %>
+                        <a class="nav-link" href="/products/new">New Product</a>
+                        <% } %>
+                </div>
+                <div class="navbar-nav ms-auto">
+
+                    <span class="navbar-text me-3">
+                        <%= currentUser.username %>
+                            <span class="badge text-bg-secondary">
+                                <%= currentUser.role %>
+                            </span>
+                    </span>
+                    <% if (currentUser.role==='admin' ) { %>
+                        <a class="nav-link" href="/users/new">Add user</a>
+                        <% } %>
+                            <a class="nav-link" href="/logout">Log out</a>
+                            <% } else { %>
+                                <a class="nav-link" href="/login">Log in</a>
+                                <% } %>
+                </div>
         </div>
     </div>
 </nav>
