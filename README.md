@@ -17,4 +17,5 @@ Node.js, Express, MongoDB/Mongoose, EJS, Bootstrap, Joi
    DB_URL=mongodb://127.0.0.1:27017/price-tracker
 3. Make sure MongoDB is running locally
 4. Seed sample data: `node seeds/index.js`
-5. Start the app: `node app.js` and open http://localhost:3000
+5. Create Admin: `node seeds/createAdmin.js`
+6. Start the app: `node app.js` and open http://localhost:3000
