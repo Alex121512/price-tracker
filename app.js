@@ -66,10 +66,6 @@ app.use((req, res, next) => {
 app.use('/products', productRoutes);
 app.use('/', userRoutes);
 
-// app.get('/', (req, res) => {
-//     res.render('users/login');
-// });
-
 
 app.all(/(.*)/, (req, res, next) => {
     next(new ExpressError('Page not found', 404));

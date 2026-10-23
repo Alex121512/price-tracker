@@ -4,6 +4,10 @@ const passport = require('passport');
 const users = require('../controllers/users');
 const { validateUser, isLoggedIn, requireRole } = require('../middleware');
 
+router.get('/', (req, res) => {
+    res.redirect(req.isAuthenticated() ? '/products' : '/login');
+});
+
 router.get('/login', users.renderLogin);
 
 router.post('/login', passport.authenticate('local', { failureFlash: true, failureRedirect: '/login' }), users.login);
