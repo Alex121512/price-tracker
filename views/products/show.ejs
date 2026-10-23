@@ -1,8 +1,6 @@
 <% layout('layouts/boilerplate')%>
     <div class="container my-4" style="max-width: 760px;">
 
-        <a href="/products" class="text-decoration-none">&larr; Back to price list</a>
-
         <div class="card mt-3 shadow-sm">
             <div class="card-body">
 
@@ -65,11 +63,13 @@
                 </small>
 
                 <div class="d-flex gap-2">
-                    <a href="/products/<%=product._id%>/edit" class="btn btn-outline-info btn-sm">Edit</a>
-                    <form action="/products/<%= product._id %>?_method=DELETE" method="POST"
-                        onsubmit="return confirm('Delete <%= product.code %>?');">
-                        <button class="btn btn-outline-danger btn-sm">Delete</button>
-                    </form>
+                    <% if (currentUser.role==='admin' || currentUser.role==='manager' ) { %>
+                        <a href="/products/<%=product._id%>/edit" class="btn btn-outline-info btn-sm">Edit</a>
+                        <form action="/products/<%= product._id %>?_method=DELETE" method="POST"
+                            onsubmit="return confirm('Delete <%= product.code %>?');">
+                            <button class="btn btn-outline-danger btn-sm">Delete</button>
+                        </form>
+                        <% } %>
                 </div>
             </div>
         </div>

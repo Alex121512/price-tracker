@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const { CATEGORIES } = require('../public/javascripts/categories');
+const { CATEGORIES } = require('../utils/categories');
 
 const { Schema } = mongoose;
 

@@ -1,5 +1,5 @@
 const Product = require('../models/product');
-const { CATEGORIES } = require('../public/javascripts/categories');
+const { CATEGORIES } = require('../utils/categories');
 const escapeRegex = require('../utils/escapeRegex');
 
 module.exports.index = async (req, res) => {
@@ -18,11 +18,11 @@ module.exports.index = async (req, res) => {
     }
 
     const products = await Product.find(filter).sort({ category: 1, name: 1 });
-    res.render('index', { products, q, category, CATEGORIES });
+    res.render('products/index', { products, q, category, CATEGORIES });
 }
 
 module.exports.renderNewForm = (req, res) => {
-    res.render('new', { CATEGORIES });
+    res.render('products/new', { CATEGORIES });
 }
 
 module.exports.createProduct = async (req, res) => {
@@ -35,10 +35,10 @@ module.exports.createProduct = async (req, res) => {
 module.exports.showProduct = async (req, res) => {
     const product = await Product.findById(req.params.id);
     if (!product) {
-        req.flash('error', 'Cannot find that hike!');
+        req.flash('error', 'Cannot find that product!');
         return res.redirect('/products');
     }
-    res.render('show', { product });
+    res.render('products/show', { product });
 }
 
 module.exports.renderEditForm = async (req, res) => {
@@ -47,13 +47,12 @@ module.exports.renderEditForm = async (req, res) => {
         req.flash('error', 'Cannot find that product!');
         return res.redirect('/products');
     }
-    res.render('edit', { product, CATEGORIES });
+    res.render('products/edit', { product, CATEGORIES });
 }
 
 module.exports.updateProduct = async (req, res) => {
     const { id } = req.params;
     const product = await Product.findByIdAndUpdate(id, { ...req.body.product });
-    await product.save();
     if (!product) {
         req.flash('error', 'Cannot find that product!');
         return res.redirect('/products');
