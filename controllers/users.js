@@ -20,6 +20,17 @@ module.exports.logout = (req, res, next) => {
     });
 };
 
+async function isLastAdmin(user) {
+    if (user.role !== 'admin') return false;
+    const count = await User.countDocuments({ role: 'admin' });
+    return count <= 1;
+}
+
+module.exports.index = async (req, res) => {
+    const users = await User.find({}).sort({ role: 1, username: 1 });
+    res.render('users/index', { users, ROLES });
+};
+
 module.exports.renderNewUser = (req, res) => {
     res.render('users/new', { ROLES });
 };
@@ -35,4 +46,52 @@ module.exports.createUser = async (req, res) => {
         req.flash('error', e.message);
         res.redirect('/users/new');
     }
+};
+
+module.exports.updateRole = async (req, res) => {
+    const { role } = req.body;
+    const user = await User.findById(req.params.id);
+
+    if (!user) {
+        req.flash('error', 'User not found.');
+        return res.redirect('/users');
+    }
+    if (!ROLES.includes(role)) {
+        req.flash('error', 'Invalid role.');
+        return res.redirect('/users');
+    }
+    if (user._id.equals(req.user._id)) {
+        req.flash('error', "You can't change your own role.");
+        return res.redirect('/users');
+    }
+    if (role !== 'admin' && await isLastAdmin(user)) {
+        req.flash('error', 'There must be at least one admin.');
+        return res.redirect('/users');
+    }
+
+    user.role = role;
+    await user.save();
+    req.flash('success', `${user.username} is now ${role}.`);
+    res.redirect('/users');
+};
+
+module.exports.deleteUser = async (req, res) => {
+    const user = await User.findById(req.params.id);
+
+    if (!user) {
+        req.flash('error', 'User not found.');
+        return res.redirect('/users');
+    }
+    if (user._id.equals(req.user._id)) {
+        req.flash('error', "You can't delete your own account.");
+        return res.redirect('/users');
+    }
+    if (await isLastAdmin(user)) {
+        req.flash('error', 'There must be at least one admin.');
+        return res.redirect('/users');
+    }
+
+    await User.findByIdAndDelete(user._id);
+    req.flash('success', `${user.username} has been deleted.`);
+    res.redirect('/users');
 };
