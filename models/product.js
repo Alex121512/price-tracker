@@ -17,7 +17,7 @@ const ProductSchema = new Schema({
         tier4: priceField,
         tier5: priceField,
     },
-    //lastUpdatedBy: { type: Schema.Types.ObjectId, ref: 'User' },
+    lastUpdatedBy: { type: Schema.Types.ObjectId, ref: 'User' },
 },
     { timestamps: true },
 );

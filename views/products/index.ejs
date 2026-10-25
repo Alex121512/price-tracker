@@ -1,5 +1,7 @@
 <% layout('layouts/boilerplate') %>
     <% const money=(n)=> new Intl.NumberFormat('en-CA', { style: 'currency', currency: 'CAD' }).format(n);
+        const shortDate = (d) => d ? new Intl.DateTimeFormat('en-CA', { dateStyle: 'medium' }).format(d) : '';
+        const updatedBy = (p) => p.lastUpdatedBy ? p.lastUpdatedBy.username : '—';
         %>
 
         <div class="mb-3">
@@ -47,11 +49,12 @@
                         <th>Code</th>
                         <th>Name</th>
                         <th>Category</th>
-                        <th class="text-end">Tier 1</th>
-                        <th class="text-end">Tier 2</th>
-                        <th class="text-end">Tier 3</th>
-                        <th class="text-end">Tier 4</th>
-                        <th class="text-end">Tier 5</th>
+                        <th>Tier 1</th>
+                        <th>Tier 2</th>
+                        <th>Tier 3</th>
+                        <th>Tier 4</th>
+                        <th>Tier 5</th>
+                        <th class="text-end">Last updated</th>
                         <th></th>
                     </tr>
                 </thead>
@@ -74,10 +77,18 @@
                                 <%= p.category %>
                             </td>
                             <% for (let i=1; i <=5; i++) { %>
-                                <td class="text-end price">
+                                <td class="price">
                                     <%= money(p.prices[`tier${i}`]) %>
                                 </td>
                                 <% } %>
+                                    <td class="text-end small text-nowrap">
+                                        <div>
+                                            <%= updatedBy(p) %>
+                                        </div>
+                                        <div class="text-body-secondary">
+                                            <%= shortDate(p.updatedAt) %>
+                                        </div>
+                                    </td>
                                     <td class="text-end">
                                         <a href="/products/<%= p._id %>" class="btn btn-outline-primary btn-sm">View</a>
                                     </td>
@@ -112,6 +123,9 @@
                                     </div>
                                 </div>
                                 <% } %>
+                        </div>
+                        <div class="text-body-secondary small mt-2">
+                            Updated <%= shortDate(p.updatedAt) %> by <%= updatedBy(p) %>
                         </div>
                     </div>
                 </a>

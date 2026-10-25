@@ -17,7 +17,7 @@ module.exports.index = async (req, res) => {
         filter.category = category;
     }
 
-    const products = await Product.find(filter).sort({ category: 1, name: 1 });
+    const products = await Product.find(filter).sort({ category: 1, name: 1 }).populate('lastUpdatedBy', 'username');;
     res.render('products/index', { products, q, category, CATEGORIES });
 }
 
@@ -27,13 +27,14 @@ module.exports.renderNewForm = (req, res) => {
 
 module.exports.createProduct = async (req, res) => {
     const product = new Product(req.body.product);
+    product.lastUpdatedBy = req.user._id;
     await product.save();
     req.flash('success', 'Successfully made a new product');
     res.redirect(`/products/${product._id}`);
 }
 
 module.exports.showProduct = async (req, res) => {
-    const product = await Product.findById(req.params.id);
+    const product = await Product.findById(req.params.id).populate('lastUpdatedBy', 'username');
     if (!product) {
         req.flash('error', 'Cannot find that product!');
         return res.redirect('/products');
@@ -52,7 +53,7 @@ module.exports.renderEditForm = async (req, res) => {
 
 module.exports.updateProduct = async (req, res) => {
     const { id } = req.params;
-    const product = await Product.findByIdAndUpdate(id, { ...req.body.product });
+    const product = await Product.findByIdAndUpdate(id, { ...req.body.product, lastUpdatedBy: req.user._id }, { runValidators: true, new: true });
     if (!product) {
         req.flash('error', 'Cannot find that product!');
         return res.redirect('/products');
