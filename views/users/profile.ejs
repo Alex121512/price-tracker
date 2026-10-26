@@ -1,0 +1,62 @@
+<% layout('layouts/boilerplate') %>
+
+    <div class="row">
+        <div class="col-md-8 offset-md-2 col-lg-6 offset-lg-3">
+
+            <h1 class="h3 mb-4">Profile</h1>
+
+            <div class="card mb-4">
+                <div class="card-body">
+                    <dl class="row mb-0">
+                        <dt class="col-4 text-body-secondary fw-normal">Username</dt>
+                        <dd class="col-8 fw-semibold">
+                            <%= currentUser.username %>
+                        </dd>
+
+                        <dt class="col-4 text-body-secondary fw-normal">Email</dt>
+                        <dd class="col-8">
+                            <%= currentUser.email %>
+                        </dd>
+
+                        <dt class="col-4 text-body-secondary fw-normal">Role</dt>
+                        <dd class="col-8 mb-0"><span class="badge text-bg-secondary">
+                                <%= currentUser.role %>
+                            </span></dd>
+                    </dl>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="h5 mb-3">Change password</h2>
+
+                    <form action="/profile/password?_method=PATCH" method="POST" class="needs-validation" novalidate>
+                        <div class="mb-3">
+                            <label for="currentPassword" class="form-label">Current password</label>
+                            <input type="password" class="form-control" id="currentPassword" name="currentPassword"
+                                autocomplete="current-password" required>
+                            <div class="invalid-feedback">Enter your current password.</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="newPassword" class="form-label">New password</label>
+                            <input type="password" class="form-control" id="newPassword" name="newPassword"
+                                autocomplete="new-password" minlength="8" required>
+                            <div class="form-text">At least 8 characters.</div>
+                            <div class="invalid-feedback">Password must be at least 8 characters.</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="confirmPassword" class="form-label">Confirm new password</label>
+                            <input type="password" class="form-control" id="confirmPassword" name="confirmPassword"
+                                autocomplete="new-password" minlength="8" required>
+                            <div class="invalid-feedback">Please confirm your new password.</div>
+                        </div>
+
+                        <button class="btn btn-primary">Change password</button>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>

@@ -95,3 +95,30 @@ module.exports.deleteUser = async (req, res) => {
     req.flash('success', `${user.username} has been deleted.`);
     res.redirect('/users');
 };
+
+module.exports.renderProfile = (req, res) => {
+    res.render('users/profile');
+};
+
+module.exports.changePassword = async (req, res) => {
+    const { currentPassword, newPassword } = req.body;
+
+    if (currentPassword === newPassword) {
+        req.flash('error', 'New password must be different from the current one.');
+        return res.redirect('/profile');
+    }
+
+    try {
+        const user = await User.findById(req.user._id).select('+hash +salt');
+        await user.changePassword(currentPassword, newPassword);
+        req.flash('success', 'Your password has been changed.');
+        res.redirect('/profile');
+    } catch (e) {
+        if (e.name === 'IncorrectPasswordError') {
+            req.flash('error', 'Current password is incorrect.');
+        } else {
+            req.flash('error', e.message);
+        }
+        res.redirect('/profile');
+    }
+};

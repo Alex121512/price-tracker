@@ -1,4 +1,4 @@
-const { userSchema, productSchema } = require('./schemas');
+const { userSchema, productSchema, passwordSchema } = require('./schemas');
 const ExpressError = require('./utils/ExpressError');
 
 module.exports.isLoggedIn = (req, res, next) => {
@@ -49,3 +49,13 @@ module.exports.validateUser = (req, res, next) => {
         next();
     }
 }
+
+module.exports.validatePassword = (req, res, next) => {
+    const { error } = passwordSchema.validate(req.body, { abortEarly: false });
+    if (error) {
+        const msg = error.details.map(el => el.message).join(', ');
+        req.flash('error', msg);
+        return res.redirect('/profile');
+    }
+    next();
+};

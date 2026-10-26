@@ -25,3 +25,10 @@ module.exports.userSchema = Joi.object({
     role: Joi.string().valid(...ROLES).required(),
     password: Joi.string().min(8).max(128).required(),
 });
+
+module.exports.passwordSchema = Joi.object({
+    currentPassword: Joi.string().required(),
+    newPassword: Joi.string().min(8).max(128).required(),
+    confirmPassword: Joi.string().valid(Joi.ref('newPassword')).required()
+        .messages({ 'any.only': 'New passwords do not match' }),
+});

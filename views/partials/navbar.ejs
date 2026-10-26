@@ -15,12 +15,12 @@
                 </div>
                 <div class="navbar-nav ms-auto">
 
-                    <span class="navbar-text me-3">
+                    <a class="nav-link" href="/profile">
                         <%= currentUser.username %>
                             <span class="badge text-bg-secondary">
                                 <%= currentUser.role %>
                             </span>
-                    </span>
+                    </a>
                     <% if (currentUser.role==='admin' ) { %>
                         <a class="nav-link" href="/users">Users</a>
                         <% } %>
