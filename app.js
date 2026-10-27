@@ -11,6 +11,10 @@ const session = require('express-session');
 const flash = require('connect-flash');
 const ExpressError = require('./utils/ExpressError');
 
+const { MongoStore } = require('connect-mongo');
+const helmet = require('helmet');
+const sanitize = require('./utils/sanitize');
+
 const User = require('./models/user');
 
 const productRoutes = require('./routes/products');
@@ -28,7 +32,24 @@ mongoose.connect(dbUrl)
 
 const app = express();
 
+const isProd = process.env.NODE_ENV === 'production';
+
+app.use(
+    helmet({
+        contentSecurityPolicy: {
+            directives: {
+                scriptSrc: ["'self'", 'https://cdn.jsdelivr.net'],
+                scriptSrcAttr: ["'unsafe-inline'"],
+                styleSrc: ["'self'", "'unsafe-inline'", 'https://cdn.jsdelivr.net'],
+                imgSrc: ["'self'", 'data:'],
+                upgradeInsecureRequests: isProd ? [] : null,
+            },
+        },
+    })
+);
+
 app.use(express.urlencoded({ extended: true }));
+app.use(sanitize);
 app.use(methodOverride('_method'));
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -37,14 +58,25 @@ app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
 const sessionConfig = {
+    name: 'pt.sid',
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
+    store: MongoStore.create({
+        mongoUrl: process.env.DB_URL,
+        ttl: 60 * 60 * 24 * 7,
+        touchAfter: 24 * 60 * 60,
+    }),
     cookie: {
         httpOnly: true,
+        sameSite: 'lax',
+        secure: isProd,
         maxAge: 1000 * 60 * 60 * 24 * 7,
-    }
-}
+    },
+};
+
+if (isProd) app.set('trust proxy', 1);
+
 app.use(session(sessionConfig));
 app.use(flash());
 
